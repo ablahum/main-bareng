@@ -1,10 +1,8 @@
 node_modules/
-npm-debug.log*
+npm-debug.log
+yarn-error.log
 
 logs/
 *.log
-npm-debug.log*
-pm2-logs/
 
 .env
-.gitignore
