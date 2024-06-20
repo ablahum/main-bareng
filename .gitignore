@@ -5,3 +5,6 @@ logs/
 *.log
 npm-debug.log*
 pm2-logs/
+
+.env
+.gitignore
