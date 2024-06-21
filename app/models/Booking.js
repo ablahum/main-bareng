@@ -12,11 +12,11 @@ const Booking = sequelize.define(
         key: 'id',
       },
     },
-    user_id: {
+    field_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: 'Users',
+        model: 'Fields',
         key: 'id',
       },
     },

@@ -1,8 +1,19 @@
 const Venue = require('../models/Venue')
 const Booking = require('../models/Booking')
+const User = require('../models/User')
+const Field = require('../models/Field')
 
 const getVenues = async (req, res) => {
+  const userId = req.user.id
+
   try {
+    const user = await User.findByPk(userId)
+
+    if (user.role !== 'owner')
+      return res.status(401).json({
+        message: 'you are not allowed to see all venue',
+      })
+
     const venues = await Venue.findAll()
 
     return res.status(200).json({
@@ -18,10 +29,18 @@ const getVenues = async (req, res) => {
 }
 
 const getVenue = async (req, res) => {
-  const { id } = req.params
+  const userId = req.user.id
+  const { venueId } = req.params
 
   try {
-    const venue = await Venue.findByPk(id)
+    const user = await User.findByPk(userId)
+
+    if (user.role !== 'owner')
+      return res.status(401).json({
+        message: 'you are not allowed to see this venue',
+      })
+
+    const venue = await Venue.findByPk(venueId)
 
     if (!venue)
       return res.status(404).json({
@@ -56,6 +75,7 @@ const createVenue = async (req, res) => {
       name,
       address,
       phone,
+      user_id: user.id,
     })
 
     return res.status(201).json({
@@ -73,7 +93,7 @@ const createVenue = async (req, res) => {
 const updateVenue = async (req, res) => {
   const userId = req.user.id
   const { name, address, phone } = req.body
-  const venueId = req.params
+  const { venueId } = req.params
 
   try {
     const user = await User.findByPk(userId)
@@ -94,6 +114,7 @@ const updateVenue = async (req, res) => {
       name,
       address,
       phone,
+      user_id: user.id,
     })
     await venue.save()
 
@@ -109,33 +130,30 @@ const updateVenue = async (req, res) => {
   }
 }
 
-const bookingVenue = async (req, res) => {
-  const { user_id, field_id, play_date_start, play_date_end } = req.body
-  const venueId = req.params
+const bookingField = async (req, res) => {
+  const { play_date_start, play_date_end } = req.body
+  const userId = req.user.id
+  const { fieldId } = req.params
 
   try {
-    const venue = await Venue.findByPk(venueId)
+    const field = await Field.findByPk(fieldId)
 
-    if (!venue)
+    if (!field)
       return res.status(404).json({
-        message: 'venue not found',
+        message: 'field not found',
       })
 
-    // const bookings = await Booking.findAll({
-    //   where: {
-    //     user_id: userId,
-    //   },
-    // })
+    // validasi saat field tidak tersedia untuk disewa
 
     const booking = await Booking.create({
-      user_id,
-      field_id, // ???
+      user_id: userId,
+      field_id: field.id,
       play_date_start,
       play_date_end,
     })
 
     return res.status(201).json({
-      message: 'booking venue successful',
+      message: 'booking field successful',
       data: booking,
     })
   } catch (err) {
@@ -151,5 +169,5 @@ module.exports = {
   getVenue,
   createVenue,
   updateVenue,
-  bookingVenue,
+  bookingField,
 }

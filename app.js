@@ -19,7 +19,7 @@ app.use(cookieParser())
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.use('/api', authRoutes)
-app.use('/api/venues', venueRoutes)
+app.use('/api', venueRoutes)
 app.use('/api', bookingRoutes)
 
 module.exports = app
