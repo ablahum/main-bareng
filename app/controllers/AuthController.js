@@ -1,6 +1,6 @@
-const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
+const { User } = require('../models')
 
 const { JWT_SECRET } = process.env
 
@@ -35,12 +35,20 @@ const login = async (req, res) => {
 
   try {
     const user = await User.findOne({ where: { email } })
-    const isMatch = await bcrypt.compare(password, user.password)
 
-    if (!user || !isMatch)
+    if (!user) {
       return res.status(404).json({
         msg: 'invalid credentials',
       })
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password)
+
+    if (!isMatch) {
+      return res.status(404).json({
+        msg: 'invalid credentials',
+      })
+    }
 
     const payload = {
       id: user.id,

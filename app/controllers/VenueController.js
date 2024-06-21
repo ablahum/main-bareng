@@ -1,7 +1,4 @@
-const Venue = require('../models/Venue')
-const Booking = require('../models/Booking')
-const User = require('../models/User')
-const Field = require('../models/Field')
+const { Venue, Field, User, Booking } = require('../models')
 
 const getVenues = async (req, res) => {
   const userId = req.user.id

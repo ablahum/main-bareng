@@ -2,7 +2,7 @@ var express = require('express')
 var path = require('path')
 var cookieParser = require('cookie-parser')
 var logger = require('morgan')
-const sequelize = require('./db')
+const db = require('./app/models')
 
 const authRoutes = require('./app/routes/auth')
 const venueRoutes = require('./app/routes/venues')
@@ -10,7 +10,7 @@ const bookingRoutes = require('./app/routes/bookings')
 
 var app = express()
 
-sequelize.sync()
+db.sequelize.sync()
 
 app.use(logger('dev'))
 app.use(express.json())
